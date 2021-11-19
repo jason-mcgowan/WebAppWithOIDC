@@ -1,6 +1,5 @@
 package demo;
 
-import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
@@ -13,6 +12,8 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Startup {
 
@@ -26,10 +27,13 @@ public class Startup {
 
   public static void runUntilShutdown(String clientSecret)
       throws IOException, InterruptedException {
-    HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-    HttpContext rootContext = server.createContext("/", Startup::landingPageRequest);
+    ConcurrentMap<String, SessionData> sessions = new ConcurrentHashMap<>();
+    SessionFilter sessionFilter = new SessionFilter(sessions);
 
-    server.createContext("/openid/callback/", Startup::openIdCallback);
+    HttpServer server = HttpServer.create(new InetSocketAddress(8080), -1);
+    server.createContext("/", Startup::landingPageRequest).getFilters().add(sessionFilter);
+    server.createContext("/openid/callback/", Startup::openIdCallback).getFilters()
+        .add(sessionFilter);
     server.start();
   }
 
