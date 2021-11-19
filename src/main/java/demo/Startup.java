@@ -1,19 +1,18 @@
 package demo;
 
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 public class Startup {
 
@@ -25,9 +24,11 @@ public class Startup {
     }
   }
 
-  public static void runUntilShutdown(String clientSecret) throws IOException, InterruptedException {
-    HttpServer server = HttpServer.create(new InetSocketAddress(8080), 64);
-    server.createContext("/", Startup::landingPageRequest);
+  public static void runUntilShutdown(String clientSecret)
+      throws IOException, InterruptedException {
+    HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+    HttpContext rootContext = server.createContext("/", Startup::landingPageRequest);
+
     server.createContext("/openid/callback/", Startup::openIdCallback);
     server.start();
   }
@@ -41,30 +42,28 @@ public class Startup {
     System.out.println("request URL is: " + url.toString());
     HttpRequest request = HttpRequest.newBuilder(url)
         .POST(BodyPublishers.noBody())
-        .header("Content-type","application/x-www-form-urlencoded")
+        .header("Content-type", "application/x-www-form-urlencoded")
         .build();
     HttpClient client = HttpClient.newHttpClient();
     try {
       System.out.println("Sending request for token");
       HttpResponse<String> response = client.send(request,
           BodyHandlers.ofString(StandardCharsets.US_ASCII));
-      System.out.println("Received response:");
-      System.out.println(response.body());
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+
+    // todo get id_token and decode
+    // todo send user response
   }
 
   private static URI getOpenIdConnectUrl(String code) {
-    try {
-      return new URI("https://slack.com/api/openid.connect.token/?client_id=2464212157.2680821785088"
-          + "&client_secret=96e6d39590a94ecf1eb3f7f300d622c5"
-          + "&code=" + code
-          + "&redirect_uri=https://3c04-2600-1700-2320-ab30-acc3-c067-4009-5d2b.ngrok.io/openid/callback/");
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-      return null;
-    }
+    return URI.create(
+        "https://slack.com/api/openid.connect.token/?client_id=2464212157.2680821785088"
+            + "&client_secret=96e6d39590a94ecf1eb3f7f300d622c5"
+            + "&code=" + code
+            + "&redirect_uri=https://3c04-2600-1700-2320-ab30-acc3-c067-4009-5d2b.ngrok.io/openid/callback/"
+    );
   }
 
   private static void landingPageRequest(HttpExchange exchange) throws IOException {
