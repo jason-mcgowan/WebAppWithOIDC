@@ -25,28 +25,36 @@ public class SessionFilter extends Filter {
     Map<String, String> cookies = extractCookies(exchange);
     exchange.setAttribute(COOKIE_MAP_ATT, cookies);
 
-    boolean validSession = validSession(cookies);
-    SessionData sessionData;
-    if (validSession) {
-      sessionData = sessions.get(cookies.get(SESSION_ID_COOKIE_KEY));
-    } else {
-      sessionData = new SessionData();
-      sessions.put(sessionData.getId(), sessionData);
-      exchange.getResponseHeaders()
-          .add("Set-Cookie", SESSION_ID_COOKIE_KEY + "=" + sessionData.getId());
-    }
+    SessionData sessionData = pullOrCreateSessionData(cookies, exchange);
     exchange.setAttribute(SESSION_DATA_ATT, sessionData);
     chain.doFilter(exchange);
   }
 
-  private boolean validSession(Map<String, String> cookies) {
+  @Override
+  public String description() {
+    return
+        "Pulls key-value pairs from Cookie: request header, adds them to a Map<String, String> and attaches them to the exchange as "
+            + COOKIE_MAP_ATT;
+  }
+
+  private SessionData pullOrCreateSessionData(Map<String, String> cookies, HttpExchange exchange) {
     String sessionId = cookies.get(SESSION_ID_COOKIE_KEY);
     if (sessionId == null) {
-      return false;
+      return createNewSessionData(exchange);
     }
     SessionData sessionData = sessions.get(sessionId);
-    return sessionData != null;
-    // Can add IP address checking against the exchange, or CSRF token checking
+    if (sessionData == null) {
+      return createNewSessionData(exchange);
+    }
+    return sessionData;
+  }
+
+  private SessionData createNewSessionData(HttpExchange exchange) {
+    SessionData sessionData = new SessionData();
+    sessions.put(sessionData.getId(), sessionData);
+    exchange.getResponseHeaders()
+        .add("Set-Cookie", SESSION_ID_COOKIE_KEY + "=" + sessionData.getId());
+    return sessionData;
   }
 
   private Map<String, String> extractCookies(HttpExchange exchange) {
@@ -65,10 +73,4 @@ public class SessionFilter extends Filter {
     return cookies;
   }
 
-  @Override
-  public String description() {
-    return
-        "Pulls key-value pairs from Cookie: request header, adds them to a Map<String, String> and attaches them to the exchange as "
-            + COOKIE_MAP_ATT;
-  }
 }
