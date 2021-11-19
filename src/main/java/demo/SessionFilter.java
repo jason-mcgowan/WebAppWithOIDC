@@ -32,9 +32,9 @@ public class SessionFilter extends Filter {
 
   @Override
   public String description() {
-    return
-        "Pulls key-value pairs from Cookie: request header, adds them to a Map<String, String> and attaches them to the exchange as "
-            + COOKIE_MAP_ATT;
+    return "Adds two attributes to the exchange\r\n"
+        + SESSION_DATA_ATT + ": A SessionData object\r\n"
+        + COOKIE_MAP_ATT + ": A Map<String, String> of cookies";
   }
 
   private SessionData pullOrCreateSessionData(Map<String, String> cookies, HttpExchange exchange) {
