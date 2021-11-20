@@ -1,5 +1,6 @@
 package demo;
 
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
@@ -7,11 +8,13 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpClient.Redirect;
+import java.net.http.HttpClient.Version;
 import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -43,22 +46,48 @@ public class Startup {
     String code = exchange.getRequestURI().toString().split("code=")[1];
     System.out.println("code: " + code);
     URI url = getOpenIdConnectUrl(code);
-    System.out.println("request URL is: " + url.toString());
+    System.out.println("request URL is: " + url);
     HttpRequest request = HttpRequest.newBuilder(url)
-        .POST(BodyPublishers.noBody())
-        .header("Content-type", "application/x-www-form-urlencoded")
         .build();
-    HttpClient client = HttpClient.newHttpClient();
+    System.out.println("Request URI is: " + request.uri());
+    HttpClient client = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS)
+        .build();
     try {
       System.out.println("Sending request for token");
       HttpResponse<String> response = client.send(request,
           BodyHandlers.ofString(StandardCharsets.US_ASCII));
+      Gson gson = new Gson();
+      System.out.println("Status code: " + response.statusCode());
+      System.out.println("URI: " + response.uri());
+      System.out.println("Headers: " + response.headers().toString());
+      System.out.println("Body: " + response.body());
+      OpenIdResponse oidr = gson.fromJson(response.body(), OpenIdResponse.class);
+      System.out.println("OIDR object: " + oidr);
+      System.out.println("OIDR token: " + oidr.getId_token());
+      String tokenJson = getJwtPayload(oidr.getId_token());
+      System.out.println("tokenJson: " + tokenJson);
+      IdToken idt = gson.fromJson(tokenJson, IdToken.class);
+      System.out.println("Name is: " + idt.getName());
+      System.out.println("Email is: " + idt.getEmail());
+      System.out.println("Returning something");
+      byte[] bodyBytes = "Ok".getBytes(StandardCharsets.UTF_8);
+      exchange.sendResponseHeaders(200, bodyBytes.length);
+      exchange.getResponseBody().write(bodyBytes);
+      // check if token came back ok
+      // get email and name
+      // update session info
+      // send user to logged in page
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
 
     // todo get id_token and decode
     // todo send user response
+  }
+
+  private static String getJwtPayload(String id_token) {
+    String jwtPayload = id_token.split("\\.")[1];
+    return new String(Base64.getDecoder().decode(jwtPayload));
   }
 
   private static URI getOpenIdConnectUrl(String code) {
