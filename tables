@@ -1,0 +1,67 @@
+CREATE TABLE slack_user (
+  open_id_sub VARCHAR NOT NULL,
+  local_user_id INTEGER NOT NULL,
+  email VARCHAR,
+  name VARCHAR,
+  PRIMARY KEY (open_id_sub),
+  FOREIGN KEY (local_user_id) REFERENCES local_user (id),
+  UNIQUE (local_user_id)
+  );
+
+CREATE TABLE local_user (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  display_name VARCHAR,
+  PRIMARY KEY (id),
+  );
+
+CREATE TABLE event (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  name VARCHAR NOT NULL,
+  description VARCHAR NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL
+  PRIMARY KEY (id)
+  );
+
+CREATE TABLE purchase (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  local_user_id INTEGER NOT NULL,
+  event_id INTEGER NOT NULL,
+  event_ticket_id INTEGER NOT NULL,
+  quantity INTEGER NOT NULL,
+  purchase_date DATE NOT NULL,
+  price_at_purchase DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (local_user_id) REFERENCES local_user (id),
+  FOREIGN KEY (event_id) REFERENCES event (id),
+  FOREIGN KEY (event_ticket_id) REFERENCES event_ticket (id)
+  );
+
+CREATE TABLE event_ticket (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  event_id INTEGER NOT NULL,
+  ticket_type VARCHAR NOT NULL,
+  price DECIMAL(10,2),
+  quantity_remaining INTEGER NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (event_id) REFERENCES event (id)
+  );
+
+CREATE TABLE event_ticket (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  event_id INTEGER NOT NULL,
+  ticket_type VARCHAR NOT NULL,
+  price DECIMAL(10,2),
+  quantity_remaining INTEGER NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (event_id) REFERENCES event (id)
+  );
+
+CREATE TABLE authorized_event_editor (
+  id INTEGER NOT NULL AUTO_INCREMENT,
+  local_user_id INTEGER NOT NULL
+  event_id INTEGER NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (local_user_id) REFERENCES local_user (id),
+  FOREIGN KEY (event_id) REFERENCES event (id)
+  );
