@@ -12,12 +12,6 @@ public class Server {
 
   private static final String LOGIN_PATH = "/login/";
 
-  private final Config config;
-
-  public Server(Config config) {
-    this.config = config;
-  }
-
   private static void printExchangeRequestInfo(HttpExchange exchange) throws IOException {
     System.out.println("Request received");
     System.out.println(exchange.getRequestMethod() + exchange.getRequestURI());
@@ -29,6 +23,7 @@ public class Server {
   }
 
   public void start() throws IOException {
+    Config config = Services.getInstance().getConfig();
     ConcurrentMap<String, SessionData> sessions = new ConcurrentHashMap<>();
     LoginCheckFilter loginCheckFilter = new LoginCheckFilter(config.getWebHost() + LOGIN_PATH);
     SessionFilter sessionFilter = new SessionFilter(sessions);
@@ -36,7 +31,7 @@ public class Server {
     HttpServer server = HttpServer.create(new InetSocketAddress(8080), -1);
     server.createContext(LOGIN_PATH, new LoginHandler(config)).getFilters()
         .add(sessionFilter);
-    server.createContext(config.getSlackCallbackUrl(), new SlackOidcHandler(config)).getFilters()
+    server.createContext(config.getSlackCallbackUrl(), new SlackOidcHandler()).getFilters()
         .add(sessionFilter);
 
     server.start();

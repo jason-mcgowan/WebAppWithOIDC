@@ -7,11 +7,10 @@ import java.nio.file.Paths;
 
 public class Startup {
 
-
   public static void main(String[] args) {
     try {
-      Config config = loadConfig(args);
-      Server server = new Server(config);
+      Services.getInstance().setConfig(loadConfig(args));
+      Server server = new Server();
       server.start();
     } catch (Exception e) {
       e.printStackTrace();

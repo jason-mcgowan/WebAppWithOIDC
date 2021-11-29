@@ -15,12 +15,7 @@ import util.Jwts;
 
 public class SlackOidcHandler implements HttpHandler {
 
-  private final Config config;
   private final Gson gson = new Gson();
-
-  public SlackOidcHandler(Config config) {
-    this.config = config;
-  }
 
   @Override
   public void handle(HttpExchange exchange) throws IOException {
@@ -49,6 +44,7 @@ public class SlackOidcHandler implements HttpHandler {
   }
 
   private URI getOpenIdConnectUrl(String code) {
+    Config config = Services.getInstance().getConfig();
     return URI.create(
         "https://slack.com/api/openid.connect.token/?"
             + "client_id=" + config.getClient_id()
