@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentMap;
 
 public class Server {
 
+  private static final String LOGIN_PATH = "/login/";
+
   private final Config config;
 
   public Server(Config config) {
@@ -28,13 +30,15 @@ public class Server {
 
   public void start() throws IOException {
     ConcurrentMap<String, SessionData> sessions = new ConcurrentHashMap<>();
+    LoginCheckFilter loginCheckFilter = new LoginCheckFilter(config.getWebHost() + LOGIN_PATH);
     SessionFilter sessionFilter = new SessionFilter(sessions);
 
     HttpServer server = HttpServer.create(new InetSocketAddress(8080), -1);
-    server.createContext("/login/slack/", new SlackLoginHandler(config)).getFilters()
+    server.createContext(LOGIN_PATH, new LoginHandler(config)).getFilters()
         .add(sessionFilter);
     server.createContext(config.getSlackCallbackUrl(), new SlackOidcHandler(config)).getFilters()
         .add(sessionFilter);
+
     server.start();
   }
 }

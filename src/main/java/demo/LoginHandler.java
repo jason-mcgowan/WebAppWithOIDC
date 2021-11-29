@@ -8,12 +8,12 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import util.SlackTools;
 
-public class SlackLoginHandler implements HttpHandler {
+public class LoginHandler implements HttpHandler {
 
   private final Config config;
   private final String redirectUri;
 
-  public SlackLoginHandler(Config config) {
+  public LoginHandler(Config config) {
     this.config = config;
     this.redirectUri = config.getWebHost() + config.getSlackCallbackUrl();
   }
