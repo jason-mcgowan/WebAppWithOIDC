@@ -2,7 +2,10 @@ package util;
 
 import java.util.Base64;
 
-public class Jwts {
+public final class Jwts {
+
+  private Jwts() {
+  }
 
   public static String getPayload(String jwt) {
     String jwtPayload = jwt.split("\\.")[1];

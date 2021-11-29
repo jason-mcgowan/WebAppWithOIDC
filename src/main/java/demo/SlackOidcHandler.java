@@ -15,7 +15,8 @@ import util.Jwts;
 
 public class SlackOidcHandler implements HttpHandler {
 
-  private Config config;
+  private final Config config;
+  private final Gson gson = new Gson();
 
   public SlackOidcHandler(Config config) {
     this.config = config;
@@ -30,23 +31,21 @@ public class SlackOidcHandler implements HttpHandler {
     try {
       HttpResponse<String> response = client.send(request,
           BodyHandlers.ofString(StandardCharsets.US_ASCII));
-      Gson gson = new Gson();
       OpenIdResponse oidr = gson.fromJson(response.body(), OpenIdResponse.class);
       String tokenJson = Jwts.getPayload(oidr.getId_token());
       IdToken idt = gson.fromJson(tokenJson, IdToken.class);
+      String sub = idt.getSub();
+      // todo
+      // look up sub in DB
+      // if no sub, add and create new user in local DB with name
+      // append local user to session data and set logged in
+      // display successful page with name and link to main page
       byte[] bodyBytes = "Ok".getBytes(StandardCharsets.UTF_8);
       exchange.sendResponseHeaders(200, bodyBytes.length);
       exchange.getResponseBody().write(bodyBytes);
-      // check if token came back ok
-      // get email and name
-      // update session info
-      // send user to logged in page
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-    // todo get id_token and decode
-    // todo send user response
   }
 
   private URI getOpenIdConnectUrl(String code) {
