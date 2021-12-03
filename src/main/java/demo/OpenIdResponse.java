@@ -1,12 +1,12 @@
 package demo;
 
 public class OpenIdResponse {
-  private String ok;
+  private boolean ok;
   private String access_token;
   private String token_type;
   private String id_token;
 
-  public String getOk() {
+  public boolean getOk() {
     return ok;
   }
 

@@ -9,14 +9,18 @@ public class Startup {
 
   public static void main(String[] args) {
     try {
-      Config config = loadConfig(args);
-      Services.getInstance().setConfig(config);
-      Services.getInstance().setDbPool(new DbPool(config));
+      initServices(args);
       Server server = new Server();
       server.start();
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public static void initServices(String[] args) throws IOException {
+    Config config = loadConfig(args);
+    Services.getInstance().setConfig(config);
+    Services.getInstance().setDbPool(new DbPool(config));
   }
 
   private static Config loadConfig(String[] args) throws IOException {
