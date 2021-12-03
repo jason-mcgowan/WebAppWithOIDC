@@ -8,6 +8,15 @@ package demo;
 public final class Services {
 
   private Config config;
+  private DbPool dbPool;
+
+  public DbPool getDbPool() {
+    return dbPool;
+  }
+
+  public void setDbPool(DbPool dbPool) {
+    this.dbPool = dbPool;
+  }
 
   public Config getConfig() {
     return config;

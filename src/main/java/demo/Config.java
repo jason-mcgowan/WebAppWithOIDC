@@ -25,4 +25,16 @@ public class Config {
   public String getClient_secret() {
     return client_secret;
   }
+
+  public String getDb_address() {
+    return db_address;
+  }
+
+  public String getDb_username() {
+    return db_username;
+  }
+
+  public String getDb_password() {
+    return db_password;
+  }
 }

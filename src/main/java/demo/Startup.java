@@ -9,7 +9,9 @@ public class Startup {
 
   public static void main(String[] args) {
     try {
-      Services.getInstance().setConfig(loadConfig(args));
+      Config config = loadConfig(args);
+      Services.getInstance().setConfig(config);
+      Services.getInstance().setDbPool(new DbPool(config));
       Server server = new Server();
       server.start();
     } catch (Exception e) {
