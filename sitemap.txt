@@ -1,0 +1,40 @@
+/
+GET: If not logged in, redirect to login path. Otherwise, show display name and links:
+-logout
+-user account
+-view events
+-view transactions
+-create event
+
+/logout/
+GET: Logs user out, display message with link to log back in
+
+/account/
+GET: Show link to change name
+
+/account/changename/
+GET: Show form to change name with POST message
+POST: Change to the name provided in body, redirect to account page
+
+/all-events/
+Actions: Query and show upcoming events with links for details
+
+/event/*
+GET:
+Parse the URL to an event id
+Look up the event id and display its details with a link to event list, purchase w/qty (POST), or home
+POST:
+Get quantity from message
+Check availability -> return unavailable if qty too high
+Decrement availability, create transaction, respond with successful message
+
+/transactions/
+GET: Show a list of all your events with links to details, qty tickets purchased, and transfer option
+POST:
+Get user id and qty from body
+Verify id exists, qty available
+Update receiver info, decrement sender info
+
+/create/
+GET: Show form with date, qty, price, description, start date, end date
+POST: Create the event, return a successful page with event id and link home
