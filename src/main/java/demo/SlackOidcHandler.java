@@ -11,8 +11,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import util.Jwts;
 
 public class SlackOidcHandler implements HttpHandler {
@@ -43,7 +43,7 @@ public class SlackOidcHandler implements HttpHandler {
     }
     String tokenJson = Jwts.getPayload(oidr.getId_token());
     IdToken idt = gson.fromJson(tokenJson, IdToken.class);
-    if (idt.getSub().isBlank()) {
+    if (idt.getSub() == null || idt.getSub().isBlank()) {
       // todo send error page
       return;
     }
@@ -52,6 +52,7 @@ public class SlackOidcHandler implements HttpHandler {
       addInfo(idt, sessionData);
     } catch (SQLException e) {
       // todo log, show error page
+      e.printStackTrace();
       return;
     }
     // todo display successful page with name and link to main page
@@ -62,33 +63,24 @@ public class SlackOidcHandler implements HttpHandler {
   }
 
   private void addInfo(IdToken idt, SessionData sessionData) throws SQLException {
-    DbPool pool = Services.getInstance().getDbPool();
     String sub = idt.getSub();
-    String query =
-        "SELECT local_user.id, local_user.display_name FROM slack_user "
-            + "INNER JOIN local_user ON slack_user.local_user_id=local_user.id "
-            + "WHERE slack_user.open_id_sub=\"" + sub + "\"";
-    ResultSet rs = pool.executeQuery(query);
-    rs.last();
-    int rowCount = rs.getRow();
-    int local_id;
-    String displayName;
-    if (rowCount == 0) {
-      String statement = "INSERT INTO local_user VALUES (0, \"" + idt.getName() + "\")";
-      ResultSet newUser = pool.executeUpdate(statement);
-      newUser.next();
-      local_id = newUser.getInt(1);
-      statement = "INSERT INTO slack_user VALUES (\"" + sub + "\", " + local_id + ")";
-      pool.executeUpdate(statement);
+    Map<Integer, String> users = DbStatements.slackSubQuery(sub);
+    int localId = 0;
+    String displayName = "";
+    if (users.size() == 1) {
+      for (Map.Entry<Integer, String> entry : users.entrySet()) {
+        localId = entry.getKey();
+        displayName = entry.getValue();
+      }
+    } else if (users.isEmpty()) {
       displayName = idt.getName();
-    } else if (rowCount > 1) {
-      // todo how to handle this?
-      return;
+      localId = DbStatements.insertNewLocalUser(displayName);
+      DbStatements.insertNewSlackUser(sub, localId);
     } else {
-      local_id = rs.getInt(1);
-      displayName = rs.getString(2);
+      // todo throw some exception?
+      return;
     }
-    sessionData.setLocalUserId(local_id);
+    sessionData.setLocalUserId(localId);
     sessionData.setDisplayName(displayName);
     sessionData.setLoggedIn(true);
   }
