@@ -1,25 +1,25 @@
 package demo;
 
+import com.google.gson.annotations.SerializedName;
+
 public class IdToken {
   private String iss;
   private String sub;
   private String aud;
-  private String exp;
-  private String iat;
-  private String auth_time;
+  private long exp;
+  private long iat;
+  private long auth_time;
   private String nonce;
   private String at_hash;
-  private String httpsslackcomteam_id;
-  private String httpsslackcomuser_id;
-  private String email;
-  private String email_verified;
-  private String date_email_verified;
+  @SerializedName("https://slack.com/team_id")  private String slackTeamId;
+  @SerializedName("https://slack.com/user_id") private String slackUserId;
   private String locale;
   private String name;
   private String given_name;
   private String family_name;
-  private String httpsslackcomteam_image_230;
-  private String httpsslackcomteam_image_default;
+  @SerializedName("https://slack.com/team_name") private String slackTeamName;
+  @SerializedName("https://slack.com/team_domain") private String slackTeamDomain;
+  @SerializedName("https://slack.com/team_image_230") private String slackTeamImage;
 
   @Override
   public String toString() {
@@ -27,22 +27,20 @@ public class IdToken {
         "iss='" + iss + '\'' +
         ", sub='" + sub + '\'' +
         ", aud='" + aud + '\'' +
-        ", exp='" + exp + '\'' +
-        ", iat='" + iat + '\'' +
-        ", auth_time='" + auth_time + '\'' +
+        ", exp=" + exp +
+        ", iat=" + iat +
+        ", auth_time=" + auth_time +
         ", nonce='" + nonce + '\'' +
         ", at_hash='" + at_hash + '\'' +
-        ", httpsslackcomteam_id='" + httpsslackcomteam_id + '\'' +
-        ", httpsslackcomuser_id='" + httpsslackcomuser_id + '\'' +
-        ", email='" + email + '\'' +
-        ", email_verified='" + email_verified + '\'' +
-        ", date_email_verified='" + date_email_verified + '\'' +
+        ", slackTeamId='" + slackTeamId + '\'' +
+        ", slackUserId='" + slackUserId + '\'' +
         ", locale='" + locale + '\'' +
         ", name='" + name + '\'' +
         ", given_name='" + given_name + '\'' +
         ", family_name='" + family_name + '\'' +
-        ", httpsslackcomteam_image_230='" + httpsslackcomteam_image_230 + '\'' +
-        ", httpsslackcomteam_image_default='" + httpsslackcomteam_image_default + '\'' +
+        ", slackTeamName='" + slackTeamName + '\'' +
+        ", slackTeamDomain='" + slackTeamDomain + '\'' +
+        ", slackTeamImage='" + slackTeamImage + '\'' +
         '}';
   }
 
@@ -58,15 +56,15 @@ public class IdToken {
     return aud;
   }
 
-  public String getExp() {
+  public long getExp() {
     return exp;
   }
 
-  public String getIat() {
+  public long getIat() {
     return iat;
   }
 
-  public String getAuth_time() {
+  public long getAuth_time() {
     return auth_time;
   }
 
@@ -78,24 +76,12 @@ public class IdToken {
     return at_hash;
   }
 
-  public String getHttpsslackcomteam_id() {
-    return httpsslackcomteam_id;
+  public String getSlackTeamId() {
+    return slackTeamId;
   }
 
-  public String getHttpsslackcomuser_id() {
-    return httpsslackcomuser_id;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public String getEmail_verified() {
-    return email_verified;
-  }
-
-  public String getDate_email_verified() {
-    return date_email_verified;
+  public String getSlackUserId() {
+    return slackUserId;
   }
 
   public String getLocale() {
@@ -114,11 +100,15 @@ public class IdToken {
     return family_name;
   }
 
-  public String getHttpsslackcomteam_image_230() {
-    return httpsslackcomteam_image_230;
+  public String getSlackTeamName() {
+    return slackTeamName;
   }
 
-  public String getHttpsslackcomteam_image_default() {
-    return httpsslackcomteam_image_default;
+  public String getSlackTeamDomain() {
+    return slackTeamDomain;
+  }
+
+  public String getSlackTeamImage() {
+    return slackTeamImage;
   }
 }
