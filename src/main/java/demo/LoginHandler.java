@@ -1,6 +1,5 @@
 package demo;
 
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -21,11 +20,18 @@ public class LoginHandler implements HttpHandler {
 
   @Override
   public void handle(HttpExchange exchange) throws IOException {
-    String button = SlackTools.loginButton(redirectUri, config.getClient_id());
-    String body = HtmlBuilder.simplePage("Login", "Login", button);
-    byte[] bodyBytes = body.getBytes(StandardCharsets.US_ASCII);
-    exchange.sendResponseHeaders(200, bodyBytes.length);
+    SessionData sd = (SessionData) exchange.getAttribute(SessionFilter.SESSION_DATA_ATT);
+    String bodyText;
+    if (sd.isLoggedIn()) {
+      bodyText = "You are already logged in, please log out if you wish to switch accounts";
+    } else {
+      bodyText = SlackTools.loginButton(redirectUri, config.getClient_id());
+    }
+    String bodyHtml = HtmlBuilder.simplePage("Login", "Login", bodyText);
+    byte[] msgBytes = bodyHtml.getBytes(StandardCharsets.US_ASCII);
+    exchange.sendResponseHeaders(200, msgBytes.length);
     OutputStream os = exchange.getResponseBody();
-    os.write(bodyBytes);
+    os.write(msgBytes);
+    os.close();
   }
 }
