@@ -44,7 +44,7 @@ public class DbPool {
   }
 
 
-  private Connection getConnection() throws SQLException {
+  public Connection getConnection() throws SQLException {
     if (pool.isEmpty()) {
       return DriverManager.getConnection(url, user, password);
     } else {
@@ -52,7 +52,7 @@ public class DbPool {
     }
   }
 
-  private void returnConnection(Connection conn) {
+  public void returnConnection(Connection conn) {
     pool.add(conn);
   }
 }
