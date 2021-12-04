@@ -43,34 +43,37 @@ public class SlackOidcHandler implements HttpHandler {
     }
     String tokenJson = Jwts.getPayload(oidr.getId_token());
     IdToken idt = gson.fromJson(tokenJson, IdToken.class);
+    System.out.println(idt);
     if (idt.getSub().isBlank()) {
       // todo send error page
       return;
     }
     SessionData sessionData = (SessionData) exchange.getAttribute(SessionFilter.SESSION_DATA_ATT);
     try {
-      getId(idt, sessionData);
+      addInfo(idt, sessionData);
     } catch (SQLException e) {
       // todo log, show error page
       return;
     }
     // todo display successful page with name and link to main page
-    byte[] bodyBytes = "Ok".getBytes(StandardCharsets.UTF_8);
+    String body = "Welcome, " + sessionData.getDisplayName();
+    byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
     exchange.sendResponseHeaders(200, bodyBytes.length);
     exchange.getResponseBody().write(bodyBytes);
   }
 
-  private void getId(IdToken idt, SessionData sessionData) throws SQLException {
+  private void addInfo(IdToken idt, SessionData sessionData) throws SQLException {
     DbPool pool = Services.getInstance().getDbPool();
     String sub = idt.getSub();
     String query =
-        "SELECT local_user.id FROM slack_user "
+        "SELECT local_user.id, local_user.display_name FROM slack_user "
             + "INNER JOIN local_user ON slack_user.local_user_id=local_user.id "
             + "WHERE slack_user.open_id_sub=\"" + sub + "\"";
     ResultSet rs = pool.executeQuery(query);
     rs.last();
     int rowCount = rs.getRow();
     int local_id;
+    String displayName;
     if (rowCount == 0) {
       String statement = "INSERT INTO local_user VALUES (0, \"" + idt.getName() + "\")";
       ResultSet newUser = pool.executeUpdate(statement);
@@ -80,14 +83,16 @@ public class SlackOidcHandler implements HttpHandler {
           "INSERT INTO slack_user VALUES (\"" + sub + "\", " + local_id + ", \""
               + idt.getEmail() + "\", \"" + idt.getName() + "\")";
       pool.executeUpdate(statement);
-      sessionData.setLocalUserId(local_id);
+      displayName = idt.getName();
     } else if (rowCount > 1) {
       // todo how to handle this?
       return;
     } else {
       local_id = rs.getInt(1);
+      displayName = rs.getString(2);
     }
     sessionData.setLocalUserId(local_id);
+    sessionData.setDisplayName(displayName);
     sessionData.setLoggedIn(true);
   }
 

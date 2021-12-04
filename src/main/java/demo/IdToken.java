@@ -21,6 +21,31 @@ public class IdToken {
   private String httpsslackcomteam_image_230;
   private String httpsslackcomteam_image_default;
 
+  @Override
+  public String toString() {
+    return "IdToken{" +
+        "iss='" + iss + '\'' +
+        ", sub='" + sub + '\'' +
+        ", aud='" + aud + '\'' +
+        ", exp='" + exp + '\'' +
+        ", iat='" + iat + '\'' +
+        ", auth_time='" + auth_time + '\'' +
+        ", nonce='" + nonce + '\'' +
+        ", at_hash='" + at_hash + '\'' +
+        ", httpsslackcomteam_id='" + httpsslackcomteam_id + '\'' +
+        ", httpsslackcomuser_id='" + httpsslackcomuser_id + '\'' +
+        ", email='" + email + '\'' +
+        ", email_verified='" + email_verified + '\'' +
+        ", date_email_verified='" + date_email_verified + '\'' +
+        ", locale='" + locale + '\'' +
+        ", name='" + name + '\'' +
+        ", given_name='" + given_name + '\'' +
+        ", family_name='" + family_name + '\'' +
+        ", httpsslackcomteam_image_230='" + httpsslackcomteam_image_230 + '\'' +
+        ", httpsslackcomteam_image_default='" + httpsslackcomteam_image_default + '\'' +
+        '}';
+  }
+
   public String getIss() {
     return iss;
   }

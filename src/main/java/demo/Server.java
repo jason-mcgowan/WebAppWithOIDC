@@ -22,13 +22,13 @@ public class Server {
     System.out.println(new String(bodyBytes, StandardCharsets.US_ASCII));
   }
 
-  public void start() throws IOException {
+  public void start(int port) throws IOException {
     Config config = Services.getInstance().getConfig();
     ConcurrentMap<String, SessionData> sessions = new ConcurrentHashMap<>();
     LoginCheckFilter loginCheckFilter = new LoginCheckFilter(config.getWebHost() + LOGIN_PATH);
     SessionFilter sessionFilter = new SessionFilter(sessions);
 
-    HttpServer server = HttpServer.create(new InetSocketAddress(8080), -1);
+    HttpServer server = HttpServer.create(new InetSocketAddress(port), -1);
     server.createContext(LOGIN_PATH, new LoginHandler(config)).getFilters()
         .add(sessionFilter);
     server.createContext(config.getSlackCallbackUrl(), new SlackOidcHandler()).getFilters()

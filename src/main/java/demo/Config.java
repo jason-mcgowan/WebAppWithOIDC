@@ -2,6 +2,7 @@ package demo;
 
 public class Config {
 
+  private int serverPort;
   private String webHost;
   private String slackCallbackUrl;
   private String client_id;
@@ -9,6 +10,10 @@ public class Config {
   private String db_address;
   private String db_username;
   private String db_password;
+
+  public int getServerPort() {
+    return serverPort;
+  }
 
   public String getWebHost() {
     return webHost;

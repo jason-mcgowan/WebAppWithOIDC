@@ -9,21 +9,21 @@ public class Startup {
 
   public static void main(String[] args) {
     try {
-      initServices(args);
+      Config config = readConfigFile(args);
+      initServices(config);
       Server server = new Server();
-      server.start();
+      server.start(config.getServerPort());
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public static void initServices(String[] args) throws IOException {
-    Config config = loadConfig(args);
+  public static void initServices(Config config) {
     Services.getInstance().setConfig(config);
     Services.getInstance().setDbPool(new DbPool(config));
   }
 
-  private static Config loadConfig(String[] args) throws IOException {
+  public static Config readConfigFile(String[] args) throws IOException {
     if (args.length < 1) {
       throw new IllegalArgumentException(
           "Must include single command line argument for config file location");
