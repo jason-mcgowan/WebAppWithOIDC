@@ -43,7 +43,6 @@ public class SlackOidcHandler implements HttpHandler {
     }
     String tokenJson = Jwts.getPayload(oidr.getId_token());
     IdToken idt = gson.fromJson(tokenJson, IdToken.class);
-    System.out.println(idt);
     if (idt.getSub().isBlank()) {
       // todo send error page
       return;
@@ -78,10 +77,8 @@ public class SlackOidcHandler implements HttpHandler {
       String statement = "INSERT INTO local_user VALUES (0, \"" + idt.getName() + "\")";
       ResultSet newUser = pool.executeUpdate(statement);
       newUser.next();
-      local_id = rs.getInt(1);
-      statement =
-          "INSERT INTO slack_user VALUES (\"" + sub + "\", " + local_id + ", \""
-              + idt.getEmail() + "\", \"" + idt.getName() + "\")";
+      local_id = newUser.getInt(1);
+      statement = "INSERT INTO slack_user VALUES (\"" + sub + "\", " + local_id + ")";
       pool.executeUpdate(statement);
       displayName = idt.getName();
     } else if (rowCount > 1) {
