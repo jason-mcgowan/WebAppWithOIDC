@@ -14,6 +14,16 @@ public class SessionData {
     isLoggedIn = false;
   }
 
+  @Override
+  public String toString() {
+    return "SessionData{" +
+        "id='" + id + '\'' +
+        ", isLoggedIn=" + isLoggedIn +
+        ", localUserId=" + localUserId +
+        ", displayName='" + displayName + '\'' +
+        '}';
+  }
+
   public String getDisplayName() {
     return displayName;
   }
