@@ -44,6 +44,8 @@ public class SessionFilter extends Filter {
     }
     SessionData sessionData = sessions.get(sessionId);
     if (sessionData == null) {
+      exchange.getResponseHeaders()
+          .add("Set-Cookie", SESSION_ID_COOKIE_KEY + "=; Max-Age=0; Path=/");
       return createNewSessionData(exchange);
     }
     return sessionData;
@@ -53,7 +55,8 @@ public class SessionFilter extends Filter {
     SessionData sessionData = new SessionData();
     sessions.put(sessionData.getId(), sessionData);
     exchange.getResponseHeaders()
-        .add("Set-Cookie", SESSION_ID_COOKIE_KEY + "=" + sessionData.getId());
+        .add("Set-Cookie",
+            SESSION_ID_COOKIE_KEY + "=" + sessionData.getId() + "; Max-Age=3600; Path=/");
     return sessionData;
   }
 
