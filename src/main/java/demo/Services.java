@@ -1,5 +1,7 @@
 package demo;
 
+import freemarker.template.Configuration;
+
 /**
  * Singleton to hold various global services.
  *
@@ -9,6 +11,15 @@ public final class Services {
 
   private Config config;
   private DbPool dbPool;
+  private Configuration freemarkerCfg;
+
+  public Configuration getFreemarkerCfg() {
+    return freemarkerCfg;
+  }
+
+  public void setFreemarkerCfg(Configuration freemarkerCfg) {
+    this.freemarkerCfg = freemarkerCfg;
+  }
 
   public DbPool getDbPool() {
     return dbPool;

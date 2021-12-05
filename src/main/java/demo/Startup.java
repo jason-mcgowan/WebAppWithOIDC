@@ -1,6 +1,9 @@
 package demo;
 
 import com.google.gson.Gson;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -18,9 +21,10 @@ public class Startup {
     }
   }
 
-  public static void initServices(Config config) {
+  public static void initServices(Config config) throws IOException {
     Services.getInstance().setConfig(config);
     Services.getInstance().setDbPool(new DbPool(config));
+    Services.getInstance().setFreemarkerCfg(initFreemarkerConfig(config.getTemplatePath()));
   }
 
   public static Config readConfigFile(String[] args) throws IOException {
@@ -31,5 +35,20 @@ public class Startup {
     String file = Files.readString(Paths.get(args[0]));
     Gson gson = new Gson();
     return gson.fromJson(file, Config.class);
+  }
+
+  private static Configuration initFreemarkerConfig(String templateDir) throws IOException {
+
+    // Recommended settings from the manual
+    // https://freemarker.apache.org/docs/pgui_quickstart_createconfiguration.html
+
+    Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
+    cfg.setDirectoryForTemplateLoading(new File(templateDir));
+    cfg.setDefaultEncoding("UTF-8");
+    cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+    cfg.setLogTemplateExceptions(false);
+    cfg.setWrapUncheckedExceptions(true);
+    cfg.setFallbackOnNullLoopVariable(false);
+    return cfg;
   }
 }
