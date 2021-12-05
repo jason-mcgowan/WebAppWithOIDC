@@ -4,6 +4,7 @@ public class Config {
 
   private int serverPort;
   private String webHost;
+  private String templatePath;
   private String slackCallbackUrl;
   private String client_id;
   private String client_secret;
@@ -17,6 +18,10 @@ public class Config {
 
   public String getWebHost() {
     return webHost;
+  }
+
+  public String getTemplatePath() {
+    return templatePath;
   }
 
   public String getSlackCallbackUrl() {
