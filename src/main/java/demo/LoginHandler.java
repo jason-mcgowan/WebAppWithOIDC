@@ -4,6 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -25,28 +26,21 @@ public class LoginHandler implements HttpHandler {
   @Override
   public void handle(HttpExchange exchange) throws IOException {
     SessionData sd = (SessionData) exchange.getAttribute(SessionFilter.SESSION_DATA_ATT);
-    Template temp;
+    String templatePath;
     Map<String, Object> model = new HashMap<>();
     if (sd.isLoggedIn()) {
-      temp = Services.getInstance().getFreemarkerCfg().getTemplate("login/alreadyLoggedIn.html");
+      templatePath = "login/alreadyLoggedIn.html";
       model.put("mainUrl", config.getWebHost() + config.getMainPath());
       model.put("logoutUrl", config.getWebHost() + config.getLogoutPath());
     } else {
-      temp = Services.getInstance().getFreemarkerCfg().getTemplate("login/loginPrompt.html");
+      templatePath = "login/loginPrompt.html";
       String slackButton = SlackTools.loginButton(redirectUri, config.getClient_id());
       model.put("slackButton", slackButton);
     }
-    StringWriter sw = new StringWriter();
     try {
-      temp.process(model, sw);
+      ExchangeTools.templateResponse(exchange, model, templatePath);
     } catch (TemplateException e) {
       e.printStackTrace();
-      return;
     }
-    byte[] msgBytes = sw.toString().getBytes(StandardCharsets.US_ASCII);
-    exchange.sendResponseHeaders(200, msgBytes.length);
-    OutputStream os = exchange.getResponseBody();
-    os.write(msgBytes);
-    os.close();
   }
 }
