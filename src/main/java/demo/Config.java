@@ -11,6 +11,9 @@ public class Config {
   private String db_address;
   private String db_username;
   private String db_password;
+  private String mainPath;
+  private String logoutPath;
+  private String loginPath;
 
   public int getServerPort() {
     return serverPort;
@@ -46,5 +49,17 @@ public class Config {
 
   public String getDb_password() {
     return db_password;
+  }
+
+  public String getMainPath() {
+    return mainPath;
+  }
+
+  public String getLogoutPath() {
+    return logoutPath;
+  }
+
+  public String getLoginPath() {
+    return loginPath;
   }
 }
