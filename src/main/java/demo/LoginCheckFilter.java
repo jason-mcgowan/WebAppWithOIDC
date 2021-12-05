@@ -3,9 +3,7 @@ package demo;
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import util.HtmlBuilder;
+import java.util.List;
 
 public class LoginCheckFilter extends Filter {
 
@@ -34,12 +32,8 @@ public class LoginCheckFilter extends Filter {
   }
 
   private void redirect(HttpExchange exchange) throws IOException {
-    String body = "Please log in: <a href=\"" + redirectUri + "\">Link</a>";
-    String payload = HtmlBuilder.simplePage("", "Please Log In", body);
-    byte[] bytes = payload.getBytes(StandardCharsets.US_ASCII);
-    exchange.sendResponseHeaders(200, bytes.length);
-    OutputStream os = exchange.getResponseBody();
-    os.write(bytes);
+    exchange.getResponseHeaders().put("Location", List.of(redirectUri));
+    exchange.sendResponseHeaders(302, 0);
   }
 
 

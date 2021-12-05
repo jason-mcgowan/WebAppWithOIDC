@@ -15,7 +15,7 @@ public class Startup {
       Config config = readConfigFile(args);
       initServices(config);
       Server server = new Server();
-      server.start(config.getServerPort());
+      server.start(config);
     } catch (Exception e) {
       e.printStackTrace();
     }
