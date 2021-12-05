@@ -13,6 +13,10 @@ public class Config {
   private String db_password;
   private String mainPath;
   private String logoutPath;
+  private String eventsPath;
+  private String createEventPath;
+  private String transactionsPath;
+  private String accountPath;
   private String loginPath;
 
   public int getServerPort() {
@@ -57,6 +61,22 @@ public class Config {
 
   public String getLogoutPath() {
     return logoutPath;
+  }
+
+  public String getEventsPath() {
+    return eventsPath;
+  }
+
+  public String getCreateEventPath() {
+    return createEventPath;
+  }
+
+  public String getTransactionsPath() {
+    return transactionsPath;
+  }
+
+  public String getAccountPath() {
+    return accountPath;
   }
 
   public String getLoginPath() {

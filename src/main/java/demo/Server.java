@@ -1,5 +1,6 @@
 package demo;
 
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,6 +20,9 @@ public class Server {
         .add(sessionFilter);
     server.createContext(config.getSlackCallbackUrl(), new SlackOidcHandler()).getFilters()
         .add(sessionFilter);
+    HttpContext main = server.createContext("/", new RootHandler(config));
+    main.getFilters().add(sessionFilter);
+    main.getFilters().add(loginCheckFilter);
 
     server.start();
   }

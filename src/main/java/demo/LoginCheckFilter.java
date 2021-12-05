@@ -33,7 +33,7 @@ public class LoginCheckFilter extends Filter {
 
   private void redirect(HttpExchange exchange) throws IOException {
     exchange.getResponseHeaders().put("Location", List.of(redirectUri));
-    exchange.sendResponseHeaders(302, 0);
+    exchange.sendResponseHeaders(302, -1);
   }
 
 
