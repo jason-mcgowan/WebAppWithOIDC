@@ -1,5 +1,6 @@
 package demo;
 
+import java.time.Instant;
 import java.util.UUID;
 
 public class SessionData {
@@ -8,20 +9,14 @@ public class SessionData {
   private boolean isLoggedIn;
   private int localUserId;
   private String displayName;
+  private Instant timeLastActive;
+  private boolean logoutRequested;
 
   public SessionData() {
     id = UUID.randomUUID().toString().replaceAll("-", "");
     isLoggedIn = false;
-  }
-
-  @Override
-  public String toString() {
-    return "SessionData{" +
-        "id='" + id + '\'' +
-        ", isLoggedIn=" + isLoggedIn +
-        ", localUserId=" + localUserId +
-        ", displayName='" + displayName + '\'' +
-        '}';
+    timeLastActive = Instant.now();
+    logoutRequested = false;
   }
 
   public String getDisplayName() {
@@ -50,5 +45,21 @@ public class SessionData {
 
   public String getId() {
     return id;
+  }
+
+  public Instant getTimeLastActive() {
+    return timeLastActive;
+  }
+
+  public void setTimeLastActive(Instant timeLastActive) {
+    this.timeLastActive = timeLastActive;
+  }
+
+  public boolean isLogoutRequested() {
+    return logoutRequested;
+  }
+
+  public void setLogoutRequested(boolean logoutRequested) {
+    this.logoutRequested = logoutRequested;
   }
 }

@@ -32,6 +32,10 @@ public class Server {
     context.getFilters().add(sessionFilter);
     context.getFilters().add(loginCheckFilter);
 
+    context = server.createContext(config.getLogoutPath(), new LogoutHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
+
     server.start();
   }
 }

@@ -3,6 +3,7 @@ package demo;
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,13 @@ public class SessionFilter extends Filter {
     exchange.setAttribute(COOKIE_MAP_ATT, cookies);
 
     SessionData sessionData = pullOrCreateSessionData(cookies, exchange);
+    sessionData.setTimeLastActive(Instant.now());
     exchange.setAttribute(SESSION_DATA_ATT, sessionData);
     chain.doFilter(exchange);
+    if (sessionData.isLogoutRequested()) {
+      sessionData.setLoggedIn(false);
+      sessions.remove(sessionData.getId());
+    }
   }
 
   @Override
@@ -35,6 +41,14 @@ public class SessionFilter extends Filter {
     return "Adds two attributes to the exchange\r\n"
         + SESSION_DATA_ATT + ": A SessionData object\r\n"
         + COOKIE_MAP_ATT + ": A Map<String, String> of cookies";
+  }
+
+  /**
+   * Clears all sessions older than the provided number of milliseconds
+   * @param age The millisecond age above which to clear sessions
+   */
+  public void cullSessions(long age) {
+
   }
 
   private SessionData pullOrCreateSessionData(Map<String, String> cookies, HttpExchange exchange) {
