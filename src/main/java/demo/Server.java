@@ -20,9 +20,13 @@ public class Server {
         .add(sessionFilter);
     server.createContext(config.getSlackCallbackUrl(), new SlackOidcHandler()).getFilters()
         .add(sessionFilter);
-    HttpContext main = server.createContext("/", new RootHandler(config));
-    main.getFilters().add(sessionFilter);
-    main.getFilters().add(loginCheckFilter);
+    HttpContext context = server.createContext("/", new RootHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
+
+    context = server.createContext(config.getAccountPath(), new AccountHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
 
     server.start();
   }

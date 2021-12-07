@@ -19,6 +19,8 @@ public class DbStatements {
       "INSERT INTO local_user VALUES (0, ?)";
   private static final String INSERT_SLACK_USER_STATEMENT =
       "INSERT INTO slack_user VALUES (?, ?)";
+  private static final String UPDATE_USER_NAME_STATMENT =
+      "UPDATE local_user SET display_name = ? WHERE id = ?";
 
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
@@ -59,6 +61,17 @@ public class DbStatements {
     Connection conn = pool.getConnection();
     try (PreparedStatement ps = conn.prepareStatement(INSERT_SLACK_USER_STATEMENT)) {
       ps.setString(1, sub);
+      ps.setInt(2, localId);
+      ps.executeUpdate();
+    } finally {
+      pool.returnConnection(conn);
+    }
+  }
+
+  public static void updateUserName(String newName, int localId) throws SQLException {
+    Connection conn = pool.getConnection();
+    try (PreparedStatement ps = conn.prepareStatement(UPDATE_USER_NAME_STATMENT)) {
+      ps.setString(1, newName);
       ps.setInt(2, localId);
       ps.executeUpdate();
     } finally {
