@@ -18,10 +18,19 @@ public final class HttpTools {
     Charset cs = StandardCharsets.UTF_8;
     for (String s : kvps) {
       String[] kvp = s.split("=");
-      if (kvp.length != 2) {
+      if (kvp.length == 0) {
         throw new IllegalArgumentException("Key-value pairs not properly constructed");
       }
-      result.put(URLDecoder.decode(kvp[0], cs), URLDecoder.decode(kvp[1], cs));
+      String key = URLDecoder.decode(kvp[0], cs);
+      String value;
+      if (kvp.length == 1) {
+        value = "";
+      } else if (kvp.length == 2) {
+        value = URLDecoder.decode(kvp[1], cs);
+      } else {
+        throw new IllegalArgumentException("Key-value pairs not properly constructed");
+      }
+      result.put(key, value);
     }
     return result;
   }
