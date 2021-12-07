@@ -23,6 +23,7 @@ public class AccountHandler implements HttpHandler {
     SessionData sd = (SessionData) exchange.getAttribute(SessionFilter.SESSION_DATA_ATT);
     Map<String, Object> model = new HashMap<>();
     model.put("mainUrl", config.getWebHost());
+    model.put("userId", sd.getLocalUserId());
     String templatePath;
     if (exchange.getRequestMethod().equals("POST")) {
       templatePath = "/message.html";
