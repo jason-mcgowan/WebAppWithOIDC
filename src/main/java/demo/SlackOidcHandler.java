@@ -3,6 +3,7 @@ package demo;
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,12 +13,18 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import util.Jwts;
 
 public class SlackOidcHandler implements HttpHandler {
 
   private final Gson gson = new Gson();
+  private final Config config;
+
+  public SlackOidcHandler() {
+    this.config = Services.getInstance().getConfig();
+  }
 
   @Override
   public void handle(HttpExchange exchange) throws IOException {
@@ -32,34 +39,38 @@ public class SlackOidcHandler implements HttpHandler {
       e.printStackTrace();
       return;
     }
+    String message = completeLogin(exchange, response);
+    Map<String, Object> model = new HashMap<>();
+    model.put("message", message);
+    model.put("mainUrl", config.getWebHost());
+    try {
+      ExchangeTools.templateResponse(exchange, model, "/message.html");
+    } catch (TemplateException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private String completeLogin(HttpExchange exchange, HttpResponse<String> response) {
     if (response.statusCode() != 200) {
-      // todo send error page
-      return;
+      return "Internal error";
     }
     OpenIdResponse oidr = gson.fromJson(response.body(), OpenIdResponse.class);
     if (!oidr.getOk()) {
-      // todo send error page
-      return;
+      return "Error retrieving data from Slack";
     }
     String tokenJson = Jwts.getPayload(oidr.getId_token());
     IdToken idt = gson.fromJson(tokenJson, IdToken.class);
     if (idt.getSub() == null || idt.getSub().isBlank()) {
-      // todo send error page
-      return;
+      return "Error, Slack user data empty";
     }
     SessionData sessionData = (SessionData) exchange.getAttribute(SessionFilter.SESSION_DATA_ATT);
     try {
       addInfo(idt, sessionData);
+      return "Welcome, " + sessionData.getDisplayName();
     } catch (SQLException e) {
-      // todo log, show error page
       e.printStackTrace();
-      return;
+      return "Internal database error";
     }
-    // todo display successful page with name and link to main page
-    String body = "Welcome, " + sessionData.getDisplayName();
-    byte[] bodyBytes = body.getBytes(StandardCharsets.UTF_8);
-    exchange.sendResponseHeaders(200, bodyBytes.length);
-    exchange.getResponseBody().write(bodyBytes);
   }
 
   private void addInfo(IdToken idt, SessionData sessionData) throws SQLException {
