@@ -25,7 +25,7 @@ public class AccountHandler implements HttpHandler {
     model.put("mainUrl", config.getWebHost());
     String templatePath;
     if (exchange.getRequestMethod().equals("POST")) {
-      templatePath = "/account/POST.html";
+      templatePath = "/message.html";
       String newName = getName(exchange);
       String message;
       if (newName.isBlank()) {
