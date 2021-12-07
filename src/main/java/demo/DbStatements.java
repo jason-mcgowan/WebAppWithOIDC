@@ -19,8 +19,10 @@ public class DbStatements {
       "INSERT INTO local_user VALUES (0, ?)";
   private static final String INSERT_SLACK_USER_STATEMENT =
       "INSERT INTO slack_user VALUES (?, ?)";
-  private static final String UPDATE_USER_NAME_STATMENT =
+  private static final String UPDATE_USER_NAME_STATEMENT =
       "UPDATE local_user SET display_name = ? WHERE id = ?";
+  private static final String INSERT_EVENT_STATEMENT =
+      "INSERT INTO event VALUES (0, ?, ?, ?, ?, ?, ?, ?)";
 
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
@@ -70,9 +72,25 @@ public class DbStatements {
 
   public static void updateUserName(String newName, int localId) throws SQLException {
     Connection conn = pool.getConnection();
-    try (PreparedStatement ps = conn.prepareStatement(UPDATE_USER_NAME_STATMENT)) {
+    try (PreparedStatement ps = conn.prepareStatement(UPDATE_USER_NAME_STATEMENT)) {
       ps.setString(1, newName);
       ps.setInt(2, localId);
+      ps.executeUpdate();
+    } finally {
+      pool.returnConnection(conn);
+    }
+  }
+
+  public static void createEvent(CreateEventData event) throws SQLException {
+    Connection conn = pool.getConnection();
+    try (PreparedStatement ps = conn.prepareStatement(INSERT_EVENT_STATEMENT)) {
+      ps.setString(1, event.getName());
+      ps.setString(2, event.getDescription());
+      ps.setDate(3, event.getStartDate());
+      ps.setDate(4, event.getEndDate());
+      ps.setInt(5, event.getCreatorId());
+      ps.setInt(6, event.getQuantity());
+      ps.setBigDecimal(7, event.getPrice());
       ps.executeUpdate();
     } finally {
       pool.returnConnection(conn);

@@ -28,6 +28,10 @@ public class Server {
     context.getFilters().add(sessionFilter);
     context.getFilters().add(loginCheckFilter);
 
+    context = server.createContext(config.getCreateEventPath(), new CreateEventHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
+
     server.start();
   }
 }

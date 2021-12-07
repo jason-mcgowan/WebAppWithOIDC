@@ -62,4 +62,32 @@ public class CreateEventData {
       throw new IllegalArgumentException("Numeric value out of range");
     }
   }
+
+  public int getCreatorId() {
+    return creatorId;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public Date getStartDate() {
+    return startDate;
+  }
+
+  public Date getEndDate() {
+    return endDate;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public int getQuantity() {
+    return quantity;
+  }
+
+  public BigDecimal getPrice() {
+    return price;
+  }
 }
