@@ -8,18 +8,19 @@ import java.util.Map;
 
 public final class HttpTools {
 
-  private HttpTools() {
+  private static final String IMPROPER_KVP_MESSAGE = "Key-value pairs not properly constructed";
 
+  private HttpTools() {
   }
 
   public static Map<String, String> parseUrlEncodedPostPayload(String payload) throws IllegalArgumentException {
     Map<String, String> result = new HashMap<>();
-    String[] kvps = payload.split("&");
+    String[] pairs = payload.split("&");
     Charset cs = StandardCharsets.UTF_8;
-    for (String s : kvps) {
+    for (String s : pairs) {
       String[] kvp = s.split("=");
       if (kvp.length == 0) {
-        throw new IllegalArgumentException("Key-value pairs not properly constructed");
+        throw new IllegalArgumentException(IMPROPER_KVP_MESSAGE);
       }
       String key = URLDecoder.decode(kvp[0], cs);
       String value;
@@ -28,7 +29,7 @@ public final class HttpTools {
       } else if (kvp.length == 2) {
         value = URLDecoder.decode(kvp[1], cs);
       } else {
-        throw new IllegalArgumentException("Key-value pairs not properly constructed");
+        throw new IllegalArgumentException(IMPROPER_KVP_MESSAGE);
       }
       result.put(key, value);
     }
