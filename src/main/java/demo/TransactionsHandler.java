@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import util.HttpTools;
 
 public class TransactionsHandler implements HttpHandler {
 
@@ -41,7 +40,6 @@ public class TransactionsHandler implements HttpHandler {
       ExchangeTools.templateResponse(exchange, model, templatePath);
     } catch (TemplateException e) {
       e.printStackTrace();
-      return;
     }
   }
 }

@@ -18,6 +18,7 @@ public class Config {
   private String transactionsPath;
   private String accountPath;
   private String loginPath;
+  private String transferPath;
 
   public int getServerPort() {
     return serverPort;
@@ -81,5 +82,9 @@ public class Config {
 
   public String getLoginPath() {
     return loginPath;
+  }
+
+  public String getTransferPath() {
+    return transferPath;
   }
 }

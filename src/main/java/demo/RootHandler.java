@@ -20,11 +20,12 @@ public class RootHandler implements HttpHandler {
     SessionData sd = (SessionData) exchange.getAttribute(SessionFilter.SESSION_DATA_ATT);
     Map<String, Object> model = new HashMap<>();
     model.put("displayName", sd.getDisplayName());
-    model.put("viewEventsUrl", config.getWebHost() + config.getEventsPath());
-    model.put("createEventUrl", config.getWebHost() + config.getCreateEventPath());
-    model.put("transactionsUrl", config.getWebHost() + config.getTransactionsPath());
-    model.put("accountUrl", config.getWebHost() + config.getAccountPath());
-    model.put("logoutUrl", config.getWebHost() + config.getLogoutPath());
+    model.put("viewEventsUrl", config.getEventsPath());
+    model.put("createEventUrl", config.getCreateEventPath());
+    model.put("transactionsUrl", config.getTransactionsPath());
+    model.put("transferUrl", config.getTransferPath());
+    model.put("accountUrl", config.getAccountPath());
+    model.put("logoutUrl", config.getLogoutPath());
     String templatePath = "main.html";
     try {
       ExchangeTools.templateResponse(exchange, model, templatePath);
