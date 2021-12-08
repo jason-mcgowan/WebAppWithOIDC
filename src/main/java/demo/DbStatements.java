@@ -34,6 +34,10 @@ public class DbStatements {
   private static final String INSERT_PURCHASE =
       "INSERT INTO purchase VALUES (?, ?, ?, ?)"
           + "ON DUPLICATE KEY UPDATE quantity=quantity+?";
+  private static final String USER_PURCHASES_QUERY =
+      "SELECT event.id, event.name, event.start_date, event.end_date, purchase.quantity "
+          + "FROM purchase INNER JOIN event ON purchase.event_id=event.id "
+          + "WHERE purchase.local_user_id=?";
 
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
@@ -174,5 +178,31 @@ public class DbStatements {
     } finally {
       pool.returnConnection(conn);
     }
+  }
+
+  public static Collection<EventData> getUserTransactions(int localUserId) throws SQLException {
+    Connection conn = pool.getConnection();
+    Collection<EventData> events = new LinkedList<>();
+    try (PreparedStatement ps = conn.prepareStatement(USER_PURCHASES_QUERY,
+        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+      ps.setInt(1, localUserId);
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        events.add(purchasesToEvent(rs));
+      }
+      return events;
+    } finally {
+      pool.returnConnection(conn);
+    }
+  }
+
+  private static EventData purchasesToEvent(ResultSet rs) throws SQLException {
+    EventData event = new EventData();
+    event.setId(rs.getInt(1));
+    event.setName(rs.getString(2));
+    event.setStartDate(rs.getDate(3));
+    event.setEndDate(rs.getDate(4));
+    event.setQuantity(rs.getInt(5));
+    return event;
   }
 }

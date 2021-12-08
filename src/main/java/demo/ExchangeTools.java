@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class ExchangeTools {
@@ -35,5 +36,14 @@ public final class ExchangeTools {
     OutputStream os = exchange.getResponseBody();
     os.write(msgBytes);
     os.close();
+  }
+
+  public static void homeMessageResponse(HttpExchange exchange, String message)
+      throws TemplateException, IOException {
+    Map<String, Object> model = new HashMap<>();
+    String templatePath = "/message.html";
+    model.put("mainUrl", "/");
+    model.put("message", message);
+    ExchangeTools.templateResponse(exchange, model, templatePath);
   }
 }

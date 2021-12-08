@@ -40,6 +40,10 @@ public class Server {
     context.getFilters().add(sessionFilter);
     context.getFilters().add(loginCheckFilter);
 
+    context = server.createContext(config.getTransactionsPath(), new TransactionsHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
+
     server.start();
   }
 }
