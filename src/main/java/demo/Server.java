@@ -44,6 +44,10 @@ public class Server {
     context.getFilters().add(sessionFilter);
     context.getFilters().add(loginCheckFilter);
 
+    context = server.createContext(config.getTransferPath(), new TransferHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
+
     server.start();
   }
 }

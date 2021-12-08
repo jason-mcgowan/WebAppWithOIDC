@@ -29,7 +29,7 @@ public class DbStatements {
       "SELECT * FROM event";
   private static final String EVENT_ID_QUERY =
       "SELECT * FROM event WHERE id=?";
-  private static final String LOWER_TICKET_COUNT =
+  private static final String LOWER_EVENT_TICKETS =
       "UPDATE event SET quantity_remaining=quantity_remaining-? WHERE id=?";
   private static final String INSERT_PURCHASE =
       "INSERT INTO purchase VALUES (?, ?, ?, ?)"
@@ -38,6 +38,8 @@ public class DbStatements {
       "SELECT event.id, event.name, event.start_date, event.end_date, purchase.quantity "
           + "FROM purchase INNER JOIN event ON purchase.event_id=event.id "
           + "WHERE purchase.local_user_id=?";
+  private static final String LOWER_USER_EVENT_TICKET =
+      "UPDATE purchase SET quantity=quantity-? WHERE user_event_ids=?";
 
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
@@ -157,8 +159,9 @@ public class DbStatements {
 
   public static void purchaseTickets(int quantity, int eventId, int userId) throws SQLException {
     Connection conn = pool.getConnection();
+    conn.setAutoCommit(false);
     try (
-        PreparedStatement lowerTicket = conn.prepareStatement(LOWER_TICKET_COUNT,
+        PreparedStatement lowerTicket = conn.prepareStatement(LOWER_EVENT_TICKETS,
             ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         PreparedStatement insertPurchase = conn.prepareStatement(INSERT_PURCHASE,
             ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
@@ -172,10 +175,11 @@ public class DbStatements {
       insertPurchase.setInt(4, quantity);
       insertPurchase.setInt(5, quantity);
       insertPurchase.executeUpdate();
-    }catch (SQLException e) {
+    } catch (SQLException e) {
       conn.rollback();
       throw e;
     } finally {
+      conn.setAutoCommit(true);
       pool.returnConnection(conn);
     }
   }
@@ -205,4 +209,34 @@ public class DbStatements {
     event.setQuantity(rs.getInt(5));
     return event;
   }
+
+  public static void transferTickets(int eventId, int fromUser, int toUser, int quantity)
+      throws SQLException {
+    Connection conn = pool.getConnection();
+    conn.setAutoCommit(false);
+    try (
+        PreparedStatement lowerTicket = conn.prepareStatement(LOWER_USER_EVENT_TICKET,
+            ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        PreparedStatement insertPurchase = conn.prepareStatement(INSERT_PURCHASE,
+            ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+      lowerTicket.setInt(1, quantity);
+      String fromUserEventIds = fromUser + "," + eventId;
+      lowerTicket.setString(2, fromUserEventIds);
+      lowerTicket.executeUpdate();
+      String toUserEventIds = toUser + "," + eventId;
+      insertPurchase.setString(1, toUserEventIds);
+      insertPurchase.setInt(2, toUser);
+      insertPurchase.setInt(3, eventId);
+      insertPurchase.setInt(4, quantity);
+      insertPurchase.setInt(5, quantity);
+      insertPurchase.executeUpdate();
+    } catch (SQLException e) {
+      conn.rollback();
+      throw e;
+    } finally {
+      conn.setAutoCommit(true);
+      pool.returnConnection(conn);
+    }
+  }
+
 }
