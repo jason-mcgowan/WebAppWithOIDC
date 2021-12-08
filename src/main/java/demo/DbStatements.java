@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class DbStatements {
@@ -23,6 +25,8 @@ public class DbStatements {
       "UPDATE local_user SET display_name = ? WHERE id = ?";
   private static final String INSERT_EVENT_STATEMENT =
       "INSERT INTO event VALUES (0, ?, ?, ?, ?, ?, ?, ?)";
+  private static final String EVENT_QUERY =
+      "SELECT * FROM event";
 
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
@@ -81,19 +85,45 @@ public class DbStatements {
     }
   }
 
-  public static void createEvent(CreateEventData event) throws SQLException {
+  public static void createEvent(EventData event, int creatorLocalId) throws SQLException {
     Connection conn = pool.getConnection();
     try (PreparedStatement ps = conn.prepareStatement(INSERT_EVENT_STATEMENT)) {
       ps.setString(1, event.getName());
       ps.setString(2, event.getDescription());
       ps.setDate(3, event.getStartDate());
       ps.setDate(4, event.getEndDate());
-      ps.setInt(5, event.getCreatorId());
+      ps.setInt(5, creatorLocalId);
       ps.setInt(6, event.getQuantity());
       ps.setBigDecimal(7, event.getPrice());
       ps.executeUpdate();
     } finally {
       pool.returnConnection(conn);
     }
+  }
+
+  public static Collection<EventData> getEvents() throws SQLException {
+    Connection conn = pool.getConnection();
+    Collection<EventData> events = new LinkedList<>();
+    try (PreparedStatement ps = conn.prepareStatement(EVENT_QUERY,
+        ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+      ResultSet rs = ps.executeQuery();
+      while (rs.next()) {
+        events.add(getEventData(rs));
+      }
+      return events;
+    } finally {
+      pool.returnConnection(conn);
+    }
+  }
+
+  private static EventData getEventData(ResultSet rs) throws SQLException {
+    EventData event = new EventData();
+    event.setId(rs.getInt(1));
+    event.setName(rs.getString(2));
+    event.setStartDate(rs.getDate(4));
+    event.setEndDate(rs.getDate(5));
+    event.setQuantity(rs.getInt(7));
+    event.setPrice(rs.getBigDecimal(8));
+    return event;
   }
 }

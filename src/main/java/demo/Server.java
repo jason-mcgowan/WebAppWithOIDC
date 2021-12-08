@@ -36,6 +36,10 @@ public class Server {
     context.getFilters().add(sessionFilter);
     context.getFilters().add(loginCheckFilter);
 
+    context = server.createContext(config.getEventsPath(), new ViewEventHandler(config));
+    context.getFilters().add(sessionFilter);
+    context.getFilters().add(loginCheckFilter);
+
     server.start();
   }
 }

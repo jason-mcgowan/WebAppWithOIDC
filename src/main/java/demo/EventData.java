@@ -5,9 +5,9 @@ import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.Map;
 
-public class CreateEventData {
+public class EventData {
 
-  private final int creatorId;
+  private int id;
   private String name;
   private Date startDate;
   private Date endDate;
@@ -15,8 +15,10 @@ public class CreateEventData {
   private int quantity;
   private BigDecimal price;
 
-  public CreateEventData(Map<String, String> pairs, int creatorId) throws IllegalArgumentException {
-    this.creatorId = creatorId;
+  public EventData() {
+  }
+
+  public EventData(Map<String, String> pairs) throws IllegalArgumentException {
     initFields(pairs);
   }
 
@@ -63,31 +65,59 @@ public class CreateEventData {
     }
   }
 
-  public int getCreatorId() {
-    return creatorId;
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 
   public String getName() {
     return name;
   }
 
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public Date getStartDate() {
     return startDate;
+  }
+
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
   }
 
   public Date getEndDate() {
     return endDate;
   }
 
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
+
   public String getDescription() {
     return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public int getQuantity() {
     return quantity;
   }
 
+  public void setQuantity(int quantity) {
+    this.quantity = quantity;
+  }
+
   public BigDecimal getPrice() {
     return price;
+  }
+
+  public void setPrice(BigDecimal price) {
+    this.price = price;
   }
 }

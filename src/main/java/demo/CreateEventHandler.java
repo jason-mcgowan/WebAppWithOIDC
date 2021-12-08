@@ -47,14 +47,14 @@ public class CreateEventHandler implements HttpHandler {
     } catch (IllegalArgumentException e) {
       return e.getLocalizedMessage();
     }
-    CreateEventData event;
+    EventData event;
     try {
-      event = new CreateEventData(pairs, creatorId);
+      event = new EventData(pairs);
     } catch (IllegalArgumentException e) {
       return e.getLocalizedMessage();
     }
     try {
-      DbStatements.createEvent(event);
+      DbStatements.createEvent(event, creatorId);
       return "Event created";
     } catch (SQLException e) {
       e.printStackTrace();
