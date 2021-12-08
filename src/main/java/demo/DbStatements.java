@@ -32,7 +32,8 @@ public class DbStatements {
   private static final String LOWER_TICKET_COUNT =
       "UPDATE event SET quantity_remaining=quantity_remaining-? WHERE id=?";
   private static final String INSERT_PURCHASE =
-      "INSERT INTO purchase VALUES (0, ?, ?, ?)";
+      "INSERT INTO purchase VALUES (?, ?, ?, ?)"
+          + "ON DUPLICATE KEY UPDATE quantity=quantity+?";
 
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
@@ -160,9 +161,12 @@ public class DbStatements {
       lowerTicket.setInt(1, quantity);
       lowerTicket.setInt(2, eventId);
       lowerTicket.executeUpdate();
-      insertPurchase.setInt(1, userId);
-      insertPurchase.setInt(2, eventId);
-      insertPurchase.setInt(3, quantity);
+      String userEventIds = userId + "," + eventId;
+      insertPurchase.setString(1, userEventIds);
+      insertPurchase.setInt(2, userId);
+      insertPurchase.setInt(3, eventId);
+      insertPurchase.setInt(4, quantity);
+      insertPurchase.setInt(5, quantity);
       insertPurchase.executeUpdate();
     }catch (SQLException e) {
       conn.rollback();
