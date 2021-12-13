@@ -20,6 +20,9 @@ public class Startup {
       initServices(config);
       Server server = new Server();
       server.start(config);
+      System.out.println("Server started, press enter to shutdown");
+      int b = System.in.read();
+      server.stop();
     } catch (Exception e) {
       e.printStackTrace();
     }
