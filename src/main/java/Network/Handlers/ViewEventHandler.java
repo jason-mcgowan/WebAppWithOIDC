@@ -29,10 +29,31 @@ public class ViewEventHandler implements HttpHandler {
   public void handle(HttpExchange exchange) throws IOException {
     int eventId = getEvent(exchange);
     if (eventId == 0) {
-      listEvents(exchange);
+      String search;
+      if (exchange.getRequestMethod().equals("POST")) {
+        search = getSearchField(exchange);
+      } else {
+        search = "";
+      }
+      listEvents(exchange, search);
     } else {
       handleSubEvent(eventId, exchange);
     }
+  }
+
+  private String getSearchField(HttpExchange exchange) throws IOException {
+    String payload = new String(exchange.getRequestBody().readAllBytes());
+    Map<String, String> pairs;
+    try {
+      pairs = HttpTools.parseUrlEncodedPostPayload(payload);
+    } catch (IllegalArgumentException e) {
+      return "";
+    }
+    String term = pairs.get("search");
+    if (term == null) {
+      return "";
+    }
+    return term;
   }
 
   private void handleSubEvent(int eventId, HttpExchange exchange) throws IOException {
@@ -48,7 +69,7 @@ public class ViewEventHandler implements HttpHandler {
       return;
     }
     if (exchange.getRequestMethod().equals("POST")) {
-      doPost(event, exchange);
+      doPostPurchase(event, exchange);
     } else {
       doShow(event, exchange);
     }
@@ -67,7 +88,7 @@ public class ViewEventHandler implements HttpHandler {
     }
   }
 
-  private void doPost(EventData eventData, HttpExchange exchange) throws IOException {
+  private void doPostPurchase(EventData eventData, HttpExchange exchange) throws IOException {
     String payload = new String(exchange.getRequestBody().readAllBytes());
     Map<String, String> pairs;
     try {
@@ -119,10 +140,10 @@ public class ViewEventHandler implements HttpHandler {
     }
   }
 
-  private void listEvents(HttpExchange exchange) throws IOException {
+  private void listEvents(HttpExchange exchange, String search) throws IOException {
     Collection<EventData> events;
     try {
-      events = DbStatements.getEvents();
+      events = DbStatements.getEvents(search);
     } catch (SQLException e) {
       e.printStackTrace();
       events = new LinkedList<>();

@@ -26,8 +26,9 @@ public class DbStatements {
       "UPDATE local_user SET display_name = ? WHERE id = ?";
   private static final String INSERT_EVENT_STATEMENT =
       "INSERT INTO event VALUES (0, ?, ?, ?, ?, ?, ?, ?)";
-  private static final String ALL_EVENTS_QUERY =
-      "SELECT * FROM event";
+  private static final String EVENTS_QUERY =
+      "SELECT * FROM event "
+          + "WHERE CONCAT(name, description) LIKE ?";
   private static final String EVENT_ID_QUERY =
       "SELECT * FROM event WHERE id=?";
   private static final String LOWER_EVENT_TICKETS =
@@ -115,11 +116,12 @@ public class DbStatements {
     }
   }
 
-  public static Collection<EventData> getEvents() throws SQLException {
+  public static Collection<EventData> getEvents(String query) throws SQLException {
     Connection conn = pool.getConnection();
     Collection<EventData> events = new LinkedList<>();
-    try (PreparedStatement ps = conn.prepareStatement(ALL_EVENTS_QUERY,
+    try (PreparedStatement ps = conn.prepareStatement(EVENTS_QUERY,
         ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+      ps.setString(1, "%" + query + "%");
       ResultSet rs = ps.executeQuery();
       while (rs.next()) {
         events.add(getEventData(rs));
