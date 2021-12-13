@@ -2,7 +2,11 @@ package Network;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * @author Jason McGowan
+ */
 public class IdToken {
+
   private String iss;
   private String sub;
   private String aud;
@@ -11,15 +15,20 @@ public class IdToken {
   private long auth_time;
   private String nonce;
   private String at_hash;
-  @SerializedName("https://slack.com/team_id")  private String slackTeamId;
-  @SerializedName("https://slack.com/user_id") private String slackUserId;
+  @SerializedName("https://slack.com/team_id")
+  private String slackTeamId;
+  @SerializedName("https://slack.com/user_id")
+  private String slackUserId;
   private String locale;
   private String name;
   private String given_name;
   private String family_name;
-  @SerializedName("https://slack.com/team_name") private String slackTeamName;
-  @SerializedName("https://slack.com/team_domain") private String slackTeamDomain;
-  @SerializedName("https://slack.com/team_image_230") private String slackTeamImage;
+  @SerializedName("https://slack.com/team_name")
+  private String slackTeamName;
+  @SerializedName("https://slack.com/team_domain")
+  private String slackTeamDomain;
+  @SerializedName("https://slack.com/team_image_230")
+  private String slackTeamImage;
 
   @Override
   public String toString() {

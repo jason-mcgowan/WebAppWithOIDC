@@ -2,7 +2,6 @@ package Network;
 
 import Network.Handlers.AccountHandler;
 import Network.Handlers.CreateEventHandler;
-import Network.Handlers.LoginCheckFilter;
 import Network.Handlers.LoginHandler;
 import Network.Handlers.LogoutHandler;
 import Network.Handlers.RootHandler;
@@ -21,10 +20,18 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * Sets up the server for project4
+ *
+ * @author Jason McGowan
+ */
 public class Server {
 
   private HttpServer server;
 
+  /**
+   * Initializes all the filters and context handlers
+   */
   public void start(Config config) throws IOException {
     ConcurrentMap<String, SessionData> sessions = new ConcurrentHashMap<>();
     LoginCheckFilter loginCheckFilter = new LoginCheckFilter(
@@ -55,6 +62,9 @@ public class Server {
     server.start();
   }
 
+  /**
+   * Stops the server with no delay
+   */
   public void stop() {
     server.stop(0);
   }

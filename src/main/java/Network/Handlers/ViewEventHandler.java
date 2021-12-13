@@ -1,13 +1,14 @@
 package Network.Handlers;
 
+import Db.DbStatements;
+import Db.EventData;
+import Network.SessionData;
+import Network.SessionFilter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import common.Config;
-import Db.DbStatements;
-import Db.EventData;
 import common.ExchangeTools;
-import Network.SessionData;
-import Network.SessionFilter;
+import common.HttpTools;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,8 +16,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import common.HttpTools;
 
+/**
+ * Handles event viewer: Will show events if requested with POST search term or all events in GET
+ * request. If subpath has an event id, will display that event's details
+ *
+ * @author Jason McGowan
+ */
 public class ViewEventHandler implements HttpHandler {
 
   private final Config config;

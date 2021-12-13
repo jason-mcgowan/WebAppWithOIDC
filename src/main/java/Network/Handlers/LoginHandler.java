@@ -12,6 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import common.SlackTools;
 
+/**
+ * Provides user with options to log in
+ *
+ * @author Jason McGowan
+ */
 public class LoginHandler implements HttpHandler {
 
   private final Config config;

@@ -9,6 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * Checks incoming requests for the session cookie and id. If user's session data does not exist, it
+ * is created. The session data (new or existing) is attached as an attribute to the exchange.
+ *
+ * @author Jason McGowan
+ */
 public class SessionFilter extends Filter {
 
   public static final String COOKIE_MAP_ATT = "cookies";
@@ -41,14 +47,6 @@ public class SessionFilter extends Filter {
     return "Adds two attributes to the exchange\r\n"
         + SESSION_DATA_ATT + ": A SessionData object\r\n"
         + COOKIE_MAP_ATT + ": A Map<String, String> of cookies";
-  }
-
-  /**
-   * Clears all sessions older than the provided number of milliseconds
-   * @param age The millisecond age above which to clear sessions
-   */
-  public void cullSessions(long age) {
-
   }
 
   private SessionData pullOrCreateSessionData(Map<String, String> cookies, HttpExchange exchange) {

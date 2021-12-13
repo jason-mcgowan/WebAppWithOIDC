@@ -1,5 +1,8 @@
 package common;
 
+/**
+ * @author Jason McGowan
+ */
 public class Config {
 
   private int serverPort;

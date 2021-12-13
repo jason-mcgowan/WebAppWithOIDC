@@ -1,12 +1,16 @@
-package Network.Handlers;
+package Network;
 
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
-import Network.SessionData;
-import Network.SessionFilter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Must be added to filter list AFTER the session filter! Checks if the user's session data shows
+ * logged in, if not, responds with redirect to the login page
+ *
+ * @author Jason McGowan
+ */
 public class LoginCheckFilter extends Filter {
 
   private final String redirectUri;

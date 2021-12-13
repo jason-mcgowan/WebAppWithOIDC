@@ -6,6 +6,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for dealing with common HTTP needs
+ *
+ * @author Jason McGowan
+ */
 public final class HttpTools {
 
   private static final String IMPROPER_KVP_MESSAGE = "Key-value pairs not properly constructed";
@@ -13,7 +18,8 @@ public final class HttpTools {
   private HttpTools() {
   }
 
-  public static Map<String, String> parseUrlEncodedPostPayload(String payload) throws IllegalArgumentException {
+  public static Map<String, String> parseUrlEncodedPostPayload(String payload)
+      throws IllegalArgumentException {
     Map<String, String> result = new HashMap<>();
     String[] pairs = payload.split("&");
     Charset cs = StandardCharsets.UTF_8;

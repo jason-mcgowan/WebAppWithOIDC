@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Example server
+ * @author Jason McGowan
+ */
 public class Startup {
 
   public static void main(String[] args) {

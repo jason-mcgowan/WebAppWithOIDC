@@ -3,6 +3,10 @@ package common;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Utility class for dealing with Slack API
+ * @author Jason McGowan
+ */
 public final class SlackTools {
 
   private SlackTools() {

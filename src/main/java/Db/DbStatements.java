@@ -11,7 +11,12 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class DbStatements {
+/**
+ * Utility class for performing safe queries and updates for project4
+ *
+ * @author Jason McGowan
+ */
+public final class DbStatements {
 
   private static final DbPool pool = Services.getInstance().getDbPool();
   private static final String SLACK_SUB_QUERY =
@@ -43,6 +48,13 @@ public class DbStatements {
   private static final String LOWER_USER_EVENT_TICKET =
       "UPDATE purchase SET quantity=quantity-? WHERE user_event_ids=?";
 
+  private DbStatements() {
+  }
+
+  /**
+   * Returns a map of local user ids to their display names with the provided slack unique
+   * identifier (sub)
+   */
   public static Map<Integer, String> slackSubQuery(String sub) throws SQLException {
     Map<Integer, String> result = new HashMap<>();
     Connection conn = pool.getConnection();
@@ -78,6 +90,9 @@ public class DbStatements {
     }
   }
 
+  /**
+   * Inserts a new slack user
+   */
   public static void insertNewSlackUser(String sub, int localId) throws SQLException {
     Connection conn = pool.getConnection();
     try (PreparedStatement ps = conn.prepareStatement(INSERT_SLACK_USER_STATEMENT)) {
@@ -89,6 +104,9 @@ public class DbStatements {
     }
   }
 
+  /**
+   * Updates the user's display name
+   */
   public static void updateUserName(String newName, int localId) throws SQLException {
     Connection conn = pool.getConnection();
     try (PreparedStatement ps = conn.prepareStatement(UPDATE_USER_NAME_STATEMENT)) {
@@ -100,6 +118,9 @@ public class DbStatements {
     }
   }
 
+  /**
+   * Inserts a new event
+   */
   public static void createEvent(EventData event, int creatorLocalId) throws SQLException {
     Connection conn = pool.getConnection();
     try (PreparedStatement ps = conn.prepareStatement(INSERT_EVENT_STATEMENT)) {
@@ -116,6 +137,9 @@ public class DbStatements {
     }
   }
 
+  /**
+   * Gets all events whose name or description contains the provided query
+   */
   public static Collection<EventData> getEvents(String query) throws SQLException {
     Connection conn = pool.getConnection();
     Collection<EventData> events = new LinkedList<>();
@@ -144,6 +168,9 @@ public class DbStatements {
     return event;
   }
 
+  /**
+   * Returns the event data for the provided event id
+   */
   public static EventData getEvent(int event) throws SQLException {
     Connection conn = pool.getConnection();
     try (PreparedStatement ps = conn.prepareStatement(EVENT_ID_QUERY,
@@ -160,6 +187,10 @@ public class DbStatements {
     }
   }
 
+  /**
+   * Performs a transaction which locks concurrent table writes while it checks sufficient event
+   * tickets then raises/decrements the user/event ticket counts accordingly.
+   */
   public static void purchaseTickets(int quantity, int eventId, int userId) throws SQLException {
     Connection conn = pool.getConnection();
     conn.setAutoCommit(false);
@@ -187,6 +218,9 @@ public class DbStatements {
     }
   }
 
+  /**
+   * Returns all purchases belonging to the provided user
+   */
   public static Collection<EventData> getUserTransactions(int localUserId) throws SQLException {
     Connection conn = pool.getConnection();
     Collection<EventData> events = new LinkedList<>();
@@ -213,6 +247,11 @@ public class DbStatements {
     return event;
   }
 
+  /**
+   * Performs a transaction with concurrent table writes disabled while method checks for sufficient
+   * from-user ticket count, then increments/decrements the to-user and from-user ticket counts for
+   * the event
+   */
   public static void transferTickets(int eventId, int fromUser, int toUser, int quantity)
       throws SQLException {
     Connection conn = pool.getConnection();

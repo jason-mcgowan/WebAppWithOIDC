@@ -5,6 +5,9 @@ import java.math.RoundingMode;
 import java.sql.Date;
 import java.util.Map;
 
+/**
+ * @author Jason McGowan
+ */
 public class EventData {
 
   private int id;
@@ -22,6 +25,10 @@ public class EventData {
     initFields(pairs);
   }
 
+  /**
+   * Takes the list of keys used in the Create Event POST request, checks their validity, and
+   * assigns their values to the fields
+   */
   private void initFields(Map<String, String> pairs) {
     name = pairs.get("name");
     String startDateString = pairs.get("startDate");

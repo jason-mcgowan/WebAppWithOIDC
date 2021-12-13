@@ -3,13 +3,15 @@ package Db;
 import common.Config;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * Contains a pool of JDBC connection objects for use by the DbStatements utility class.
+ *
+ * @author Jason McGowan
+ */
 public class DbPool {
 
   private final String url;
@@ -26,24 +28,6 @@ public class DbPool {
   public DbPool(Config config) {
     this(config.getDb_address(), config.getDb_username(), config.getDb_password());
   }
-
-  public ResultSet executeQuery(String sql) throws SQLException {
-    Connection conn = getConnection();
-    PreparedStatement ps = conn.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE,
-        ResultSet.CONCUR_UPDATABLE);
-    ResultSet rs =ps.executeQuery();
-    returnConnection(conn);
-    return rs;
-  }
-
-  public ResultSet executeUpdate(String sql) throws SQLException {
-    Connection conn = getConnection();
-    PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-    ps.executeUpdate();
-    returnConnection(conn);
-    return ps.getGeneratedKeys();
-  }
-
 
   public Connection getConnection() throws SQLException {
     if (pool.isEmpty()) {

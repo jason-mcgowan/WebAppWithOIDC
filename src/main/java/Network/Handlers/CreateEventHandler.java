@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import common.HttpTools;
 
+/**
+ * @author Jason McGowan
+ */
 public class CreateEventHandler implements HttpHandler {
 
   private final Config config;

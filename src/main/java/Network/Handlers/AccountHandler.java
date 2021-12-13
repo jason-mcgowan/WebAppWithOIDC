@@ -15,6 +15,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles current user account changes
+ * @author Jason McGowan
+ */
 public class AccountHandler implements HttpHandler {
 
   private final Config config;

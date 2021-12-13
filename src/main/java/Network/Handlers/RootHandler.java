@@ -1,16 +1,21 @@
 package Network.Handlers;
 
+import Network.SessionData;
+import Network.SessionFilter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import common.Config;
 import common.ExchangeTools;
-import Network.SessionData;
-import Network.SessionFilter;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Displays links
+ *
+ * @author Jason McGowan
+ */
 public class RootHandler implements HttpHandler {
 
   private final Config config;

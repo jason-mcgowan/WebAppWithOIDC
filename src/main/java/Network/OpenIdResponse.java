@@ -1,6 +1,10 @@
 package Network;
 
+/**
+ * @author Jason McGowan
+ */
 public class OpenIdResponse {
+
   private boolean ok;
   private String access_token;
   private String token_type;

@@ -3,6 +3,11 @@ package Network;
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Contains information for the ongoing session. Linked by a browser cookie.
+ *
+ * @author Jason McGowan
+ */
 public class SessionData {
 
   private final String id;

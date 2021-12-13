@@ -1,13 +1,13 @@
 package Network.Handlers;
 
+import Db.DbStatements;
+import Db.EventData;
+import Network.SessionData;
+import Network.SessionFilter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import common.Config;
-import Db.DbStatements;
-import Db.EventData;
 import common.ExchangeTools;
-import Network.SessionData;
-import Network.SessionFilter;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -15,6 +15,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles purchases
+ *
+ * @author Jason McGowan
+ */
 public class TransactionsHandler implements HttpHandler {
 
   private final Config config;

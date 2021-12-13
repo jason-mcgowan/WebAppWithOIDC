@@ -1,19 +1,24 @@
 package Network.Handlers;
 
+import Db.DbStatements;
+import Network.SessionData;
+import Network.SessionFilter;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import common.Config;
-import Db.DbStatements;
 import common.ExchangeTools;
-import Network.SessionData;
-import Network.SessionFilter;
+import common.HttpTools;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import common.HttpTools;
 
+/**
+ * Handles transfers from current user to another user
+ *
+ * @author Jason McGowan
+ */
 public class TransferHandler implements HttpHandler {
 
   private final Config config;

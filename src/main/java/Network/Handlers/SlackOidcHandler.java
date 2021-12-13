@@ -25,6 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 import common.Jwts;
 
+/**
+ * Follows API from: https://api.slack.com/authentication/sign-in-with-slack
+ *
+ * @author Jason McGowan
+ */
 public class SlackOidcHandler implements HttpHandler {
 
   private final Gson gson = new Gson();

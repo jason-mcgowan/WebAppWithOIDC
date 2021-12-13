@@ -10,6 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for dealing with common HttpExchange needs in project4
+ *
+ * @author Jason McGowan
+ */
 public final class ExchangeTools {
 
   private ExchangeTools() {
