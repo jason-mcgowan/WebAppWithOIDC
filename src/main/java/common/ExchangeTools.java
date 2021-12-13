@@ -1,4 +1,4 @@
-package demo;
+package common;
 
 import com.sun.net.httpserver.HttpExchange;
 import freemarker.template.Template;

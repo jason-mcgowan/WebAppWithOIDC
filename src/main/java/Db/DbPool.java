@@ -1,5 +1,6 @@
-package demo;
+package Db;
 
+import common.Config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;

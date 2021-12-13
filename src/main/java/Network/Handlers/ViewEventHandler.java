@@ -1,7 +1,13 @@
-package demo;
+package Network.Handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import common.Config;
+import Db.DbStatements;
+import Db.EventData;
+import common.ExchangeTools;
+import Network.SessionData;
+import Network.SessionFilter;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -9,7 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import util.HttpTools;
+import common.HttpTools;
 
 public class ViewEventHandler implements HttpHandler {
 

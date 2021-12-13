@@ -1,4 +1,4 @@
-package util;
+package common;
 
 import java.net.URLDecoder;
 import java.nio.charset.Charset;

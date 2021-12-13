@@ -1,8 +1,16 @@
-package demo;
+package Network.Handlers;
 
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import common.Config;
+import Db.DbStatements;
+import common.ExchangeTools;
+import Network.IdToken;
+import Network.OpenIdResponse;
+import common.Services;
+import Network.SessionData;
+import Network.SessionFilter;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.net.URI;
@@ -15,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import util.Jwts;
+import common.Jwts;
 
 public class SlackOidcHandler implements HttpHandler {
 

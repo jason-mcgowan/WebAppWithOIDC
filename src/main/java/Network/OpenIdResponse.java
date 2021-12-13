@@ -1,4 +1,4 @@
-package demo;
+package Network;
 
 public class OpenIdResponse {
   private boolean ok;

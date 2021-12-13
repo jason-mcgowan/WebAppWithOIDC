@@ -1,5 +1,6 @@
-package demo;
+package common;
 
+import Db.DbPool;
 import freemarker.template.Configuration;
 
 /**

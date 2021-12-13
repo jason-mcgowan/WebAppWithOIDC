@@ -1,4 +1,4 @@
-package demo;
+package Network;
 
 import java.time.Instant;
 import java.util.UUID;

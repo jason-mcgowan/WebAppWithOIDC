@@ -1,7 +1,12 @@
-package demo;
+package Network.Handlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import common.Config;
+import Db.DbStatements;
+import common.ExchangeTools;
+import Network.SessionData;
+import Network.SessionFilter;
 import freemarker.template.TemplateException;
 import java.io.IOException;
 import java.net.URLDecoder;

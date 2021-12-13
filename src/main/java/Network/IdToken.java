@@ -1,4 +1,4 @@
-package demo;
+package Network;
 
 import com.google.gson.annotations.SerializedName;
 

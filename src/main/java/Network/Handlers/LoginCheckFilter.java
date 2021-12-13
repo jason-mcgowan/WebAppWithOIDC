@@ -1,7 +1,9 @@
-package demo;
+package Network.Handlers;
 
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpExchange;
+import Network.SessionData;
+import Network.SessionFilter;
 import java.io.IOException;
 import java.util.List;
 
