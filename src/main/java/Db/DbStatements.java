@@ -264,7 +264,10 @@ public final class DbStatements {
       lowerTicket.setInt(1, quantity);
       String fromUserEventIds = fromUser + "," + eventId;
       lowerTicket.setString(2, fromUserEventIds);
-      lowerTicket.executeUpdate();
+      int rows = lowerTicket.executeUpdate();
+      if (rows == 0) {
+        throw new SQLException("No tickets held for event");
+      }
       String toUserEventIds = toUser + "," + eventId;
       insertPurchase.setString(1, toUserEventIds);
       insertPurchase.setInt(2, toUser);
